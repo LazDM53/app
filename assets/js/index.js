@@ -1,6 +1,5 @@
-// Import decks and helpers
-import { decks, getDeckByID } from "./decks.js"; // ✅ use 'decks' array
-import { hexToString, removeColorClasses } from "./colors.js";
+import { decks } from "./decks.js";
+import { hexToString, removeColorClasses } from "./colorMap.js";
 import { renderCarouselView } from "./carousel.js";
 
 // DOM Elements
@@ -11,8 +10,7 @@ const carouselSection = document.querySelector(".carousel");
 const notFoundSection = document.querySelector("#not-found");
 const aboutSection = document.querySelector("#about");
 
-// Get current decks
-let currentDecks = decks; // ✅ directly use the exported array
+let currentDecks = [...decks];
 
 // ----------------------
 // Deck Rendering
@@ -22,40 +20,40 @@ function createDeckEl(deck) {
   const li = deckEl.querySelector(".deck");
 
   removeColorClasses(li);
-  const colorName = hexToString(deck.color);
+
+  const colorName = hexToString(deck.color) || "green";
   li.classList.add(`deck_color_${colorName}`);
 
   li.querySelector(".deck__title").textContent = deck.name;
   li.querySelector(".deck__count").textContent = `${deck.cards.length} cards`;
 
-  // Delete button
   const deleteBtn = li.querySelector(".deck__delete-btn");
-  deleteBtn?.addEventListener("click", (e) => {
-    e.stopPropagation();
+  deleteBtn.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+
     currentDecks = currentDecks.filter((d) => d.id !== deck.id);
-    localStorage.setItem("flashcardDecks", JSON.stringify(currentDecks));
-    li.remove();
+    renderAllDecks();
+
+    if (window.location.hash === `#carousel/${deck.id}`) {
+      window.location.hash = "#home";
+    }
   });
 
-  // Link for carousel navigation
   const linkEl = li.querySelector(".deck__link");
   linkEl.href = `#carousel/${deck.id}`;
   linkEl.setAttribute("aria-label", `Open deck: ${deck.name}`);
-  linkEl.addEventListener("click", (e) => {
-    e.preventDefault();
-    window.location.hash = `carousel/${deck.id}`;
-  });
 
   return deckEl;
 }
 
-function renderDeckEl(deck) {
-  const deckEl = createDeckEl(deck);
-  deckList.prepend(deckEl);
+function renderAllDecks() {
+  deckList.innerHTML = "";
+  currentDecks.forEach((deck) => {
+    const deckEl = createDeckEl(deck);
+    deckList.prepend(deckEl);
+  });
 }
-
-// Render all decks
-currentDecks.forEach(renderDeckEl);
 
 // ----------------------
 // Show / Hide Sections
@@ -84,37 +82,32 @@ function showNotFound() {
 // ----------------------
 // Router
 // ----------------------
-window.addEventListener("hashchange", handleRoute);
-window.addEventListener("load", handleRoute);
-
 function handleRoute() {
   const hash = window.location.hash.slice(1);
 
-  // Home
   if (!hash || hash === "home") {
     showDeckList();
     return;
   }
 
-  // About
   if (hash === "about") {
     showAbout();
     return;
   }
 
-  // Carousel route: #carousel/deckId
   if (hash.startsWith("carousel/")) {
     const [, deckId] = hash.split("/");
+
     if (!deckId) {
       showNotFound();
       return;
     }
 
-    const deck = getDeckByID(deckId);
+    const deck = currentDecks.find((d) => d.id === deckId);
 
     if (deck) {
       decksSection.style.display = "none";
-      carouselSection.style.display = "block";
+      carouselSection.style.display = "flex";
       notFoundSection.style.display = "none";
       aboutSection.style.display = "none";
 
@@ -122,9 +115,14 @@ function handleRoute() {
     } else {
       showNotFound();
     }
+
     return;
   }
 
-  // 404 fallback
   showNotFound();
 }
+
+renderAllDecks();
+
+window.addEventListener("hashchange", handleRoute);
+window.addEventListener("load", handleRoute);

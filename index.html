@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta name="author" content="lazaro" />
+    <meta name="author" content="Lazaro" />
     <meta
       name="description"
       content="Flashcard app for learning and memorizing"
     />
-    <meta name="keywords" content=" Flashcard, study, learning" />
+    <meta name="keywords" content="flashcard, study, learning" />
 
     <title>Flash Cards</title>
 
@@ -32,39 +32,27 @@
 
       <nav class="nav">
         <ul class="nav__links">
-          <li><a href="#home" class="nav__link">My Decks</a></li>
-          <li><a href="#about" class="nav__link">About</a></li>
+          <li class="nav__item">
+            <a href="#home" class="nav__link">My Decks</a>
+          </li>
+          <li class="nav__item">
+            <a href="#about" class="nav__link">About</a>
+          </li>
         </ul>
       </nav>
     </header>
 
     <main class="page__main-content">
-      <!-- Deck List Section -->
       <section class="decks">
         <h2 class="decks__title">My Decks</h2>
+
         <div class="wrapping-row">
-          <ul class="decks__list wrapping-row__display-contents">
-            <template id="deck-template">
-              <li class="deck deck_color_green">
-                <!-- Link covers entire deck -->
-                <a href="#" class="deck__link"></a>
-                <h3 class="deck__title"></h3>
-                <div class="deck__row">
-                  <p class="deck__count"></p>
-                  <button
-                    class="deck__delete-btn"
-                    type="button"
-                    aria-label="Delete this deck"
-                  ></button>
-                </div>
-              </li>
-            </template>
-          </ul>
+          <ul class="decks__list wrapping-row__display-contents"></ul>
+
           <button class="decks__new-decks-btn" type="button">+ New Deck</button>
         </div>
       </section>
 
-      <!-- About Section (hidden by default) -->
       <section id="about" class="about" style="display: none">
         <h2 class="about__title">About</h2>
         <p class="about__text">
@@ -74,17 +62,13 @@
         </p>
       </section>
 
-      <!-- Carousel Section (hidden by default) -->
       <section class="carousel" style="display: none">
-        <!-- Carousel Title (set dynamically if desired) -->
         <h2 class="carousel__title"></h2>
 
-        <!-- Card Display -->
         <div class="carousel__card">
-          <p class="carousel__card-text">Card question/answer goes here</p>
+          <p class="carousel__card-text"></p>
         </div>
 
-        <!-- Controls -->
         <div class="carousel__controls">
           <button
             class="carousel__btn carousel__btn_type_left"
@@ -109,21 +93,35 @@
           </button>
         </div>
 
-        <!-- Optional "Go back" link -->
         <a href="#home" class="carousel__back-link">← Go back</a>
       </section>
 
-      <!-- 404 Not Found Section -->
       <section id="not-found" class="not-found" style="display: none">
-        <h2 class="not-found__title">404 Not Found</h2>
+        <p class="not-found__code">404</p>
+        <h2 class="not-found__title">Page Not Found</h2>
         <p class="not-found__message">Oops! We can't find that page.</p>
-        <a href="#home" class="not-found__link">Go back</a>
+        <a href="#home" class="not-found__link">Go back home</a>
       </section>
     </main>
 
     <footer class="footer">
       <p class="footer__text">&copy; 2026 Flash Cards</p>
     </footer>
+
+    <template id="deck-template">
+      <li class="deck deck_color_green">
+        <a href="#" class="deck__link" aria-label="Open deck"></a>
+        <h3 class="deck__title"></h3>
+        <div class="deck__row">
+          <p class="deck__count"></p>
+          <button
+            class="deck__delete-btn"
+            type="button"
+            aria-label="Delete this deck"
+          ></button>
+        </div>
+      </li>
+    </template>
 
     <script type="module" src="./assets/js/index.js"></script>
   </body>
